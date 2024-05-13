@@ -1,20 +1,26 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flappy_bird/game/bird_movement.dart';
+import 'package:flappy_bird/game/assets.dart';
+import 'package:flappy_bird/game/configuration.dart';
 import 'package:flappy_bird/game/flappy_bird_game.dart';
-
-import '../game/assets.dart';
+import 'package:flutter/material.dart';
 
 class Bird extends SpriteGroupComponent<BirdMovement>
     with HasGameRef<FlappyBirdGame>, CollisionCallbacks {
   Bird();
 
+  int score = 0;
+
   @override
   Future<void> onLoad() async {
     final birdMidFlap = await gameRef.loadSprite(Assets.birdMidFlap);
-    final birdUpFlap = await gameRef.loadSprite(Assets.birdMidFlap);
-    final birdDownFlap = await gameRef.loadSprite(Assets.birdMidFlap);
+    final birdUpFlap = await gameRef.loadSprite(Assets.birdUpFlap);
+    final birdDownFlap = await gameRef.loadSprite(Assets.birdDownFlap);
+
+    gameRef.bird;
 
     size = Vector2(50, 40);
     position = Vector2(50, gameRef.size.y / 2 - size.y / 2);
@@ -28,6 +34,15 @@ class Bird extends SpriteGroupComponent<BirdMovement>
     add(CircleHitbox());
   }
 
+  @override
+  void update(double dt) {
+    super.update(dt);
+    position.y += Config.birdVelocity * dt;
+    if (position.y < 1) {
+      gameOver();
+    }
+  }
+
   void fly() {
     add(
       MoveByEffect(
@@ -36,6 +51,7 @@ class Bird extends SpriteGroupComponent<BirdMovement>
         onComplete: () => current = BirdMovement.down,
       ),
     );
+    FlameAudio.play(Assets.flying);
     current = BirdMovement.up;
   }
 
@@ -45,16 +61,19 @@ class Bird extends SpriteGroupComponent<BirdMovement>
     PositionComponent other,
   ) {
     super.onCollisionStart(intersectionPoints, other);
-    debugPrint('Collision Detected');
+
+    gameOver();
+  }
+
+  void reset() {
+    position = Vector2(50, gameRef.size.y / 2 - size.y / 2);
+    score = 0;
   }
 
   void gameOver() {
+    FlameAudio.play(Assets.collision);
+    game.isHit = true;
+    gameRef.overlays.add('gameOver');
     gameRef.pauseEngine();
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-    position.y += Config.birdVelocity * dt;
   }
 }
