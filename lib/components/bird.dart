@@ -2,7 +2,10 @@ import 'package:flame/components.dart';
 import 'package:flappy_bird/game/bird_movement.dart';
 import 'package:flappy_bird/game/flappy_bird_game.dart';
 
-class Bird extends SpriteGroupComponent<BirdMovement> with HasGameRef<FlappyBirdGame> {
+import '../game/assets.dart';
+
+class Bird extends SpriteGroupComponent<BirdMovement>
+    with HasGameRef<FlappyBirdGame> {
   Bird();
 
   @override
@@ -18,6 +21,6 @@ class Bird extends SpriteGroupComponent<BirdMovement> with HasGameRef<FlappyBird
       BirdMovement.middle: birdMidFlap,
       BirdMovement.up: birdUpFlap,
       BirdMovement.down: birdDownFlap,
-    }
+    };
   }
 }

@@ -2,7 +2,11 @@ import 'package:flame/game.dart';
 import 'package:flame/timer.dart';
 import 'package:flappy_bird/components/background.dart';
 import 'package:flappy_bird/components/ground.dart';
+import 'package:flappy_bird/components/pipe_group.dart';
 import 'package:flutter/material.dart';
+import 'package:flappy_bird/components/bird.dart';
+
+import 'configuration.dart';
 
 class FlappyBirdGame extends FlameGame {
   FlappyBirdGame();
